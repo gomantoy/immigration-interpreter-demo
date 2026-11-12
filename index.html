@@ -2,145 +2,656 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Immigration Interpreter Service</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f6fa;
-      margin: 0;
-      color: #19334d;
-    }
-    header {
-      background: #123354;
-      color: white;
-      padding: 22px;
-      text-align: center;
-    }
-    main {
-      max-width: 900px;
-      margin: 25px auto;
-      padding: 15px;
-    }
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 8px #0001;
-    }
-    button {
-      background: #1768a7;
-      color: white;
-      padding: 12px 18px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin: 5px;
-    }
-    input, select {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      box-sizing: border-box;
-    }
-    @media (max-width: 600px) {
-      main { margin: 8px; }
-      .card { padding: 15px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Immigration Interpreter Service</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f2f6fa;color:#19334b;
+font-family:Tahoma,Arial,sans-serif}
+header{background:#123553;color:white;padding:20px}
+header h2{margin:0 0 8px}
+header small{color:#c8dbea}
+nav{background:white;display:flex;gap:5px;padding:12px;
+overflow-x:auto;border-bottom:1px solid #d9e4ee}
+button{border:0;background:#176ca8;color:white;
+padding:11px 16px;border-radius:8px;cursor:pointer}
+nav button{white-space:nowrap;background:#e8f1f9;color:#17476b}
+main{max-width:1100px;margin:22px auto;padding:0 15px}
+.card{background:white;border:1px solid #dfe7ef;
+padding:22px;border-radius:14px;margin-bottom:15px}
+.hero{background:linear-gradient(120deg,#123553,#2478ad);
+color:white}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{margin-bottom:15px}
+label{display:block;font-weight:bold;margin-bottom:7px}
+input,select,textarea{width:100%;padding:12px;
+border:1px solid #bdcfdf;border-radius:8px;font:inherit}
+textarea{min-height:85px}
+.muted{color:#6b7f91}
+.notice{background:#e9f3fc;padding:13px;border-radius:8px}
+.warning{background:#fff3d9;padding:13px;border-radius:8px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:600px}
+th,td{padding:12px;text-align:left;border-bottom:1px solid #e2e9ef}
+th{background:#f1f6fa}
+.stat{font-size:28px;font-weight:bold;color:#14639a}
+.badge{background:#e7f0f9;padding:5px 9px;border-radius:15px}
+@media(max-width:700px){
+.grid{grid-template-columns:1fr}
+.card{padding:16px}
+header h2{font-size:18px}
+}
+@media print{
+header,nav,.no-print{display:none!important}
+body{background:white}
+main{max-width:none;margin:0}
+.card{border:0}
+}
+</style>
 </head>
 <body>
-  <header>
-    <h2>IMMIGRATION INTERPRETER SERVICE</h2>
-    <p>ระบบจัดหาล่ามออนไลน์ สำนักงานตรวจคนเข้าเมือง</p>
-    <small>DEMO VERSION</small>
-  </header>
 
-  <main>
-    <div class="card" id="screen">
-      <h2>ยินดีต้อนรับ</h2>
-      <p>ระบบจัดหาล่ามแปลภาษาออนไลน์</p>
-      <button onclick="register()">สมัครสมาชิก</button>
-      <button onclick="login()">เข้าสู่ระบบ</button>
-    </div>
-  </main>
+<header>
+<h2>🌐 IMMIGRATION INTERPRETER SERVICE</h2>
+<small>ระบบจัดหาล่ามออนไลน์ สำนักงานตรวจคนเข้าเมือง | DEMO</small>
+</header>
 
-  <script>
-    const screen = document.getElementById("screen");
+<nav id="navigation"></nav>
+<main id="app"></main>
 
-    function register() {
-      screen.innerHTML = `
-        <h2>สมัครสมาชิก</h2>
-        <select>
-          <option>เจ้าหน้าที่ตรวจคนเข้าเมือง</option>
-          <option>ล่ามแปลภาษา</option>
-        </select>
-        <input placeholder="ชื่อ-นามสกุลสมมติ">
-        <input placeholder="อีเมลสมมติ">
-        <button onclick="login()">สมัครสมาชิก (สาธิต)</button>
-      `;
-    }
+<script>
+const LANGUAGES=[
+"จีน","อังกฤษ","ญี่ปุ่น","เกาหลี","เมียนมา",
+"กัมพูชา","ลาว","เวียดนาม","รัสเซีย","อาหรับ","อื่น ๆ"
+];
 
-    function login() {
-      screen.innerHTML = `
-        <h2>เข้าสู่ระบบ</h2>
-        <input placeholder="ชื่อผู้ใช้งาน">
-        <input type="password" placeholder="รหัสผ่าน">
-        <button onclick="dashboard()">เข้าสู่ระบบสาธิต</button>
-      `;
-    }
+const JOBS=[
+"สอบสวนโดยพนักงานสอบสวน",
+"จับกุมและแจ้งสิทธิ",
+"สืบสวนและซักถาม",
+"ตรวจสอบคนต่างด้าว",
+"ช่วยเหลือคนต่างด้าว",
+"ภารกิจอื่น"
+];
 
-    function dashboard() {
-      screen.innerHTML = `
-        <h2>แดชบอร์ดเจ้าหน้าที่</h2>
-        <button onclick="request()">ยื่นคำร้องขอใช้ล่าม</button>
-        <button onclick="payment()">แบบฟอร์มเบิกจ่าย</button>
-      `;
-    }
+const PAYERS=[
+"หน่วยงานต้นสังกัดชำระเอง",
+"เบิกค่าป่วยการล่ามโดยพนักงานสอบสวน",
+"แหล่งงบประมาณอื่น"
+];
 
-    function request() {
-      screen.innerHTML = `
-        <h2>ยื่นคำร้องขอใช้ล่าม</h2>
-        <label>ภาษา</label>
-        <select>
-          <option>ภาษาจีน</option>
-          <option>ภาษาอังกฤษ</option>
-          <option>ภาษาญี่ปุ่น</option>
-          <option>ภาษาเมียนมา</option>
-        </select>
-        <label>วันที่ปฏิบัติงาน</label>
-        <input type="date">
-        <label>เวลา</label>
-        <input type="time">
-        <label>สถานที่</label>
-        <input placeholder="สถานที่ปฏิบัติงาน">
-        <label>ผู้รับผิดชอบค่าใช้จ่าย</label>
-        <select>
-          <option>หน่วยงานชำระเอง</option>
-          <option>เบิกตามระเบียบสำหรับพนักงานสอบสวน</option>
-        </select>
-        <button onclick="alert('ส่งคำร้องสาธิตสำเร็จ')">
-          ส่งคำร้อง
-        </button>
-        <button onclick="dashboard()">กลับ</button>
-      `;
-    }
+const STORAGE="iis-demo-data-v1";
+let db;
+try {
+ db=JSON.parse(localStorage.getItem(STORAGE))||
+ {users:[],requests:[],session:null};
+} catch(e) {
+ db={users:[],requests:[],session:null};
+}
 
-    function payment() {
-      screen.innerHTML = `
-        <h2>แบบฟอร์มเบิกค่าป่วยการล่าม</h2>
-        <p>สำหรับพนักงานสอบสวน (ตัวอย่าง)</p>
-        <input placeholder="เลขคดี">
-        <input placeholder="ชื่อพนักงานสอบสวน">
-        <input placeholder="ชื่อผู้ปฏิบัติหน้าที่ล่าม">
-        <input placeholder="จำนวนชั่วโมง">
-        <p>อัตราเบิกจ่ายต้องตรวจสอบตามระเบียบ</p>
-        <button onclick="window.print()">พิมพ์แบบฟอร์ม</button>
-        <button onclick="dashboard()">กลับ</button>
-      `;
-    }
-  </script>
+let page="home";
+let registerRole="officer";
+let selectedRequest=null;
+
+function save(){
+ localStorage.setItem(STORAGE,JSON.stringify(db));
+}
+function user(){
+ return db.users.find(x=>x.id===db.session);
+}
+function escapeHTML(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",
+ '"':"&quot;","'":"&#39;"
+ })[c]);
+}
+function options(items){
+ return items.map(x=>`<option>${escapeHTML(x)}</option>`).join("");
+}
+function go(name){
+ page=name;
+ render();
+ window.scrollTo(0,0);
+}
+function render(){
+ const menus=[
+ ["home","หน้าแรก"],
+ ["register","สมัครสมาชิก"],
+ ["login","เข้าสู่ระบบ"],
+ ["dashboard","แดชบอร์ด"],
+ ["request","ยื่นคำร้อง"],
+ ["matching","จัดหาล่าม"],
+ ["payment","เบิกจ่าย"],
+ ["admin","ผู้ดูแลระบบ"]
+ ];
+ document.getElementById("navigation").innerHTML=
+ menus.map(([id,label])=>
+ `<button onclick="go('${id}')">${label}</button>`
+ ).join("")+
+ (user()?`<button onclick="logout()">ออกจากระบบ</button>`:"");
+
+ const screens={
+ home,register,login,dashboard,request,
+ matching,payment,admin,receipt
+ };
+ document.getElementById("app").innerHTML=screens[page]();
+}
+
+function home(){
+ return `
+ <div class="card hero">
+ <h1>ระบบจัดหาล่ามแปลภาษาออนไลน์</h1>
+ <p>สำหรับเจ้าหน้าที่สำนักงานตรวจคนเข้าเมือง</p>
+ <p>ลงทะเบียน ยื่นคำร้อง จัดหาล่าม ติดตามงาน
+ และจัดทำเอกสารประกอบการเบิกจ่าย</p>
+ <div class="actions">
+ <button onclick="go('register')">สมัครใช้งาน</button>
+ <button onclick="go('login')">เข้าสู่ระบบ</button>
+ </div>
+ </div>
+ <div class="grid">
+ <div class="card">
+ <h3>👮 เจ้าหน้าที่ตรวจคนเข้าเมือง</h3>
+ <p>ยื่นคำร้องขอใช้ล่าม ระบุวัน เวลา สถานที่
+ และผู้รับผิดชอบค่าใช้จ่าย</p>
+ </div>
+ <div class="card">
+ <h3>🗣️ ล่ามแปลภาษา</h3>
+ <p>ลงทะเบียนภาษาและพื้นที่ให้บริการ
+ ตรวจสอบและตอบรับงาน</p>
+ </div>
+ <div class="card">
+ <h3>📋 ผู้ดูแลระบบ</h3>
+ <p>ติดตามคำร้อง จัดการข้อมูลผู้ใช้งาน
+ และตรวจสอบรายงาน</p>
+ </div>
+ <div class="card">
+ <h3>💰 ระบบค่าตอบแทน</h3>
+ <p>จัดทำแบบสรุปค่าใช้จ่ายและเอกสาร
+ ประกอบการเบิกค่าป่วยการล่าม</p>
+ </div>
+ </div>
+ <div class="warning">
+ เว็บไซต์นี้เป็นระบบสาธิต ข้อมูลบันทึกเฉพาะในเบราว์เซอร์
+ ไม่ใช่ระบบราชการจริง ห้ามกรอกข้อมูลบุคคลหรือข้อมูลคดีจริง
+ </div>`;
+}
+
+function register(){
+ return `
+ <div class="card">
+ <h2>ลงทะเบียนผู้ใช้งาน</h2>
+ <div class="actions">
+ <button onclick="registerRole='officer';render()">
+ เจ้าหน้าที่ตรวจคนเข้าเมือง</button>
+ <button onclick="registerRole='interpreter';render()">
+ ล่ามแปลภาษา</button>
+ </div>
+ <p>ประเภทบัญชี:
+ <b>${registerRole==="officer"?"เจ้าหน้าที่":"ล่าม"}</b></p>
+ <form onsubmit="submitRegister(event)">
+ <div class="grid">
+ <div class="field">
+ <label>ชื่อ-นามสกุลสมมติ</label>
+ <input name="name" required>
+ </div>
+ <div class="field">
+ <label>อีเมลสมมติ</label>
+ <input name="email" required>
+ </div>
+ ${registerRole==="officer"?`
+ <div class="field">
+ <label>หน่วยงานต้นสังกัด</label>
+ <input name="unit" placeholder="เช่น บก.สส.สตม." required>
+ </div>
+ <div class="field">
+ <label>ตำแหน่ง</label>
+ <input name="position">
+ </div>`:`
+ <div class="field">
+ <label>ภาษาที่สามารถแปลได้</label>
+ <select name="language">${options(LANGUAGES)}</select>
+ </div>
+ <div class="field">
+ <label>พื้นที่ให้บริการ</label>
+ <input name="area" required>
+ </div>`}
+ </div>
+ <div class="notice">
+ ระบบจริงจะต้องมีการตรวจสอบเอกสารและอนุมัติบัญชีก่อนใช้งาน
+ </div>
+ <div class="actions">
+ <button type="submit">บันทึกบัญชีสาธิต</button>
+ </div>
+ </form>
+ </div>`;
+}
+
+function submitRegister(e){
+ e.preventDefault();
+ const data=Object.fromEntries(new FormData(e.target));
+ if(db.users.some(x=>x.email===data.email)){
+  alert("อีเมลนี้ลงทะเบียนแล้ว");
+  return;
+ }
+ const account={
+  ...data,
+  id:"USER-"+Date.now(),
+  role:registerRole
+ };
+ db.users.push(account);
+ db.session=account.id;
+ save();
+ go("dashboard");
+}
+
+function login(){
+ return `
+ <div class="card">
+ <h2>เข้าสู่ระบบสาธิต</h2>
+ <label>เลือกบัญชีที่เคยสมัครไว้</label>
+ <select id="account">
+ ${db.users.map(x=>`
+ <option value="${escapeHTML(x.id)}">
+ ${escapeHTML(x.name)} (${escapeHTML(x.role)})
+ </option>`).join("")}
+ </select>
+ <div class="actions">
+ <button onclick="loginSaved()">เข้าสู่ระบบ</button>
+ </div>
+ <hr>
+ <h3>ทดลองใช้งานด้วยบัญชีตัวอย่าง</h3>
+ <div class="actions">
+ <button onclick="demoLogin('officer')">เจ้าหน้าที่</button>
+ <button onclick="demoLogin('interpreter')">ล่ามภาษาจีน</button>
+ <button onclick="demoLogin('admin')">ผู้ดูแล / การเงิน</button>
+ </div>
+ <p class="muted">ระบบนี้ไม่มีการตรวจสอบรหัสผ่านจริง</p>
+ </div>`;
+}
+
+function loginSaved(){
+ const id=document.getElementById("account").value;
+ if(!id)return alert("กรุณาสมัครสมาชิกก่อน");
+ db.session=id;
+ save();
+ go("dashboard");
+}
+
+function demoLogin(role){
+ const id="DEMO-"+role;
+ let account=db.users.find(x=>x.id===id);
+ if(!account){
+  account={
+   id,role,
+   name:role==="officer"?"เจ้าหน้าที่ตัวอย่าง":
+   role==="interpreter"?"ล่ามตัวอย่าง":"ผู้ดูแลตัวอย่าง",
+   unit:"บก.สส.สตม.",
+   language:"จีน",
+   area:"กรุงเทพมหานคร"
+  };
+  db.users.push(account);
+ }
+ db.session=id;
+ save();
+ go("dashboard");
+}
+
+function logout(){
+ db.session=null;
+ save();
+ go("home");
+}
+
+function dashboard(){
+ const u=user();
+ if(!u)return requireLogin();
+ const items=u.role==="officer"?
+ db.requests.filter(x=>x.owner===u.id):db.requests;
+ return `
+ <div class="card">
+ <h2>สวัสดี ${escapeHTML(u.name)}</h2>
+ <p class="muted">ประเภทบัญชี: ${escapeHTML(u.role)}</p>
+ <div class="grid">
+ <div><div class="stat">${items.length}</div>คำร้องทั้งหมด</div>
+ <div><div class="stat">${items.filter(x=>x.status==="รอจัดหาล่าม").length}</div>รอจัดหาล่าม</div>
+ <div><div class="stat">${items.filter(x=>x.status==="ยืนยันล่ามแล้ว").length}</div>ยืนยันล่ามแล้ว</div>
+ <div><div class="stat">${items.filter(x=>x.status==="เสร็จสิ้น").length}</div>เสร็จสิ้น</div>
+ </div>
+ <div class="actions">
+ ${u.role==="officer"?
+ '<button onclick="go(\\'request\\')">+ สร้างคำร้อง</button>':""}
+ <button onclick="go('matching')">ดูงานทั้งหมด</button>
+ </div>
+ </div>
+ ${requestTable(items)}`;
+}
+
+function requireLogin(){
+ return `<div class="card">
+ <h2>กรุณาเข้าสู่ระบบ</h2>
+ <button onclick="go('login')">เข้าสู่ระบบ</button>
+ </div>`;
+}
+
+function request(){
+ const u=user();
+ if(!u||u.role!=="officer")return requireLogin();
+ return `
+ <div class="card">
+ <h2>แบบคำร้องขอใช้ล่าม</h2>
+ <p class="muted">ผู้ร้องขอ: ${escapeHTML(u.name)}</p>
+ <form onsubmit="submitRequest(event)">
+ <div class="grid">
+ <div class="field">
+ <label>ประเภทภารกิจ</label>
+ <select name="job">${options(JOBS)}</select>
+ </div>
+ <div class="field">
+ <label>ภาษาที่ต้องการ</label>
+ <select name="language">${options(LANGUAGES)}</select>
+ </div>
+ <div class="field">
+ <label>วันที่ปฏิบัติงาน</label>
+ <input type="date" name="date" required>
+ </div>
+ <div class="field">
+ <label>เวลาเริ่มปฏิบัติงาน</label>
+ <input type="time" name="time" value="09:00" required>
+ </div>
+ <div class="field">
+ <label>สถานที่ปฏิบัติงาน</label>
+ <input name="location" required>
+ </div>
+ <div class="field">
+ <label>จำนวนชั่วโมงประมาณการ</label>
+ <select name="hours" id="hours" onchange="estimate()">
+ ${options(Array.from({length:12},(_,i)=>String(i+1)))}
+ </select>
+ </div>
+ <div class="field">
+ <label>ผู้รับผิดชอบค่าใช้จ่าย</label>
+ <select name="payer" id="payer" onchange="payerChanged()">
+ ${options(PAYERS)}
+ </select>
+ </div>
+ </div>
+ <div id="investigation" style="display:none">
+ <div class="grid">
+ <div class="field">
+ <label>เลขคดีสมมติ</label>
+ <input name="caseNo">
+ </div>
+ <div class="field">
+ <label>พนักงานสอบสวน (ชื่อสมมติ)</label>
+ <input name="investigator">
+ </div>
+ </div>
+ </div>
+ <div class="field">
+ <label>หมายเหตุ</label>
+ <textarea name="notes" placeholder="ห้ามใส่ข้อมูลคดีจริง"></textarea>
+ </div>
+ <div class="notice">
+ ประมาณการค่าตอบแทนตามอัตราโครงการ:
+ <b id="estimate">1,500 บาท</b>
+ <p class="muted">ไม่ใช่อัตราเบิกตามระเบียบราชการ</p>
+ </div>
+ <div class="actions">
+ <button type="submit">ส่งคำร้องสาธิต</button>
+ </div>
+ </form>
+ </div>`;
+}
+
+function payerChanged(){
+ document.getElementById("investigation").style.display=
+ document.getElementById("payer").value===PAYERS[1]?
+ "block":"none";
+}
+
+function estimate(){
+ const hours=Number(document.getElementById("hours").value);
+ document.getElementById("estimate").textContent=
+ (1500+(hours-1)*300).toLocaleString()+" บาท";
+}
+
+function submitRequest(e){
+ e.preventDefault();
+ const data=Object.fromEntries(new FormData(e.target));
+ const start=new Date(data.date+"T"+data.time).getTime();
+ if(start-Date.now()<24*60*60*1000){
+  alert("กรุณายื่นคำร้องล่วงหน้าอย่างน้อย 24 ชั่วโมง");
+  return;
+ }
+ db.requests.push({
+  ...data,
+  id:"REQ-"+Date.now(),
+  owner:user().id,
+  unit:user().unit||"",
+  status:"รอจัดหาล่าม",
+  interpreter:"",
+  interpreterId:"",
+  actualHours:""
+ });
+ save();
+ alert("บันทึกคำร้องสาธิตสำเร็จ");
+ go("matching");
+}
+
+function requestTable(items){
+ return `<div class="card">
+ <h3>รายการคำร้อง</h3>
+ <div class="tablewrap">
+ <table>
+ <tr><th>เลขคำร้อง</th><th>ภาษา</th>
+ <th>ภารกิจ</th><th>สถานะ</th><th>ดำเนินการ</th></tr>
+ ${items.map(x=>`
+ <tr>
+ <td>${escapeHTML(x.id)}</td>
+ <td>${escapeHTML(x.language)}</td>
+ <td>${escapeHTML(x.job)}</td>
+ <td>${escapeHTML(x.status)}</td>
+ <td><button onclick="detail('${x.id}')">รายละเอียด</button></td>
+ </tr>`).join("")}
+ </table>
+ </div>
+ ${items.length?"":'<p class="muted">ยังไม่มีคำร้อง</p>'}
+ </div>`;
+}
+
+function matching(){
+ const u=user();
+ if(!u)return requireLogin();
+ const items=db.requests.filter(x=>
+ u.role==="officer"?x.owner===u.id:
+ u.role==="interpreter"?
+ (x.status==="รอจัดหาล่าม"||x.interpreterId===u.id):
+ true
+ );
+ return `<h2>จัดหาล่ามและติดตามสถานะ</h2>
+ ${u.role==="interpreter"?
+ `<div class="notice">ภาษาที่ขึ้นทะเบียน:
+ ${escapeHTML(u.language)}</div>`:""}
+ ${requestTable(items)}`;
+}
+
+function detail(id){
+ const x=db.requests.find(r=>r.id===id);
+ const u=user();
+ if(!x||!u)return;
+ const canAccept=u.role==="interpreter"&&
+ x.status==="รอจัดหาล่าม"&&x.language===u.language;
+ const canFinish=x.status==="ยืนยันล่ามแล้ว"&&
+ (u.role==="admin"||
+ (u.role==="officer"&&x.owner===u.id));
+ document.getElementById("app").innerHTML=`
+ <div class="card">
+ <h2>รายละเอียดคำร้อง ${escapeHTML(x.id)}</h2>
+ <div class="grid">
+ <p><b>ภารกิจ:</b> ${escapeHTML(x.job)}</p>
+ <p><b>ภาษา:</b> ${escapeHTML(x.language)}</p>
+ <p><b>วันที่:</b> ${escapeHTML(x.date)}</p>
+ <p><b>เวลา:</b> ${escapeHTML(x.time)}</p>
+ <p><b>สถานที่:</b> ${escapeHTML(x.location)}</p>
+ <p><b>สถานะ:</b> ${escapeHTML(x.status)}</p>
+ <p><b>ล่าม:</b> ${escapeHTML(x.interpreter||"ยังไม่มี")}</p>
+ <p><b>ผู้ชำระเงิน:</b> ${escapeHTML(x.payer)}</p>
+ </div>
+ <div class="actions">
+ ${canAccept?
+ `<button onclick="acceptJob('${x.id}')">ตอบรับงาน</button>`:""}
+ ${canFinish?
+ `<button onclick="finishJob('${x.id}')">ยืนยันเสร็จสิ้น</button>`:""}
+ <button onclick="showReceipt('${x.id}')">แบบฟอร์มเบิกจ่าย</button>
+ <button onclick="go('matching')">กลับ</button>
+ </div>
+ </div>`;
+}
+
+function acceptJob(id){
+ const x=db.requests.find(r=>r.id===id);
+ const u=user();
+ if(!x||!u||u.role!=="interpreter"||
+ x.language!==u.language||x.status!=="รอจัดหาล่าม")return;
+ x.interpreter=u.name;
+ x.interpreterId=u.id;
+ x.status="ยืนยันล่ามแล้ว";
+ save();
+ detail(id);
+}
+
+function finishJob(id){
+ const x=db.requests.find(r=>r.id===id);
+ const u=user();
+ if(!x||!u||x.status!=="ยืนยันล่ามแล้ว"||
+ !(u.role==="admin"||
+ (u.role==="officer"&&x.owner===u.id)))return;
+ const hours=Number(prompt("จำนวนชั่วโมงจริง (0.5-24)",x.hours));
+ if(!Number.isFinite(hours)||hours<0.5||hours>24){
+  alert("จำนวนชั่วโมงไม่ถูกต้อง");
+  return;
+ }
+ x.actualHours=hours;
+ x.status="เสร็จสิ้น";
+ save();
+ detail(id);
+}
+
+function payment(){
+ const u=user();
+ if(!u)return requireLogin();
+ const items=db.requests.filter(x=>
+ u.role==="officer"?x.owner===u.id:
+ u.role==="interpreter"?x.interpreterId===u.id:true
+ );
+ return `
+ <h2>ระบบเบิกจ่ายค่าล่าม</h2>
+ <div class="warning">
+ อัตราค่าตอบแทนที่เสนอในโครงการ ไม่ใช่อัตราที่รับรองให้
+ เบิกตามระเบียบสำนักงานตำรวจแห่งชาติ
+ </div>
+ ${requestTable(items)}
+ <p class="muted">เลือกปุ่มรายละเอียด แล้วเลือกแบบฟอร์มเบิกจ่าย</p>`;
+}
+
+function showReceipt(id){
+ const x=db.requests.find(r=>r.id===id);
+ const u=user();
+ if(!x||!u||
+ !(u.role==="admin"||
+ (u.role==="officer"&&x.owner===u.id)||
+ (u.role==="interpreter"&&x.interpreterId===u.id)))return;
+ selectedRequest=id;
+ go("receipt");
+}
+
+function receipt(){
+ const x=db.requests.find(r=>r.id===selectedRequest);
+ if(!x)return `<div class="card">ไม่พบคำร้อง</div>`;
+ const investigation=x.payer===PAYERS[1];
+ const hours=Number(x.actualHours||x.hours);
+ const amount=1500+(Math.ceil(hours)-1)*300;
+ return `
+ <div class="card">
+ <div class="actions no-print">
+ <button onclick="go('payment')">กลับ</button>
+ <button onclick="window.print()">พิมพ์ / บันทึก PDF</button>
+ </div>
+ <h2 style="text-align:center">
+ ${investigation?
+ "แบบบันทึกประกอบการเบิกค่าป่วยการล่าม":
+ "แบบสรุปค่าใช้จ่ายล่ามของหน่วยงาน"}
+ </h2>
+ <p style="text-align:center" class="muted">
+ เอกสารตัวอย่าง ไม่ใช่แบบราชการที่ได้รับอนุมัติ
+ </p>
+ <p><b>เลขคำร้อง:</b> ${escapeHTML(x.id)}</p>
+ <p><b>หน่วยงาน:</b> ${escapeHTML(x.unit)}</p>
+ ${investigation?`
+ <p><b>เลขคดี:</b> ${escapeHTML(x.caseNo||"________")}</p>
+ <p><b>พนักงานสอบสวน:</b>
+ ${escapeHTML(x.investigator||"________")}</p>`:""}
+ <p><b>ภารกิจ:</b> ${escapeHTML(x.job)}</p>
+ <p><b>ล่าม:</b> ${escapeHTML(x.interpreter||"________")}</p>
+ <p><b>ภาษา:</b> ${escapeHTML(x.language)}</p>
+ <p><b>วันที่:</b> ${escapeHTML(x.date)}</p>
+ <p><b>เวลา:</b> ${escapeHTML(x.time)}</p>
+ <p><b>สถานที่:</b> ${escapeHTML(x.location)}</p>
+ <p><b>เวลาปฏิบัติงาน:</b>
+ ${x.actualHours?hours+" ชั่วโมง":"รอยืนยันเวลาจริง"}</p>
+ <p><b>ผู้รับผิดชอบค่าใช้จ่าย:</b>
+ ${escapeHTML(x.payer)}</p>
+ ${investigation?`
+ <p><b>อัตราค่าป่วยการที่ตรวจสอบตามระเบียบ:</b>
+ __________ บาท</p>
+ <p><b>จำนวนเงินที่ขอเบิก:</b> __________ บาท</p>`:`
+ <p><b>ประมาณการตามอัตราโครงการ:</b>
+ ${amount.toLocaleString()} บาท</p>`}
+ <div class="warning">
+ ต้องตรวจสอบสิทธิ อัตราค่าป่วยการ และอำนาจอนุมัติ
+ ตามระเบียบที่ใช้บังคับก่อนดำเนินการจริง
+ </div>
+ <div class="grid" style="margin-top:50px;text-align:center">
+ <p>ลงชื่อ ..................................<br>ผู้ปฏิบัติหน้าที่ล่าม</p>
+ <p>ลงชื่อ ..................................<br>เจ้าหน้าที่ผู้รับรอง</p>
+ <p>ลงชื่อ ..................................<br>เจ้าหน้าที่การเงิน</p>
+ <p>ลงชื่อ ..................................<br>ผู้มีอำนาจอนุมัติ</p>
+ </div>
+ </div>`;
+}
+
+function admin(){
+ const u=user();
+ if(!u||u.role!=="admin")return requireLogin();
+ return `
+ <div class="card">
+ <h2>ระบบบริหารจัดการ</h2>
+ <div class="grid">
+ <p>ผู้ใช้งานทั้งหมด: <b>${db.users.length}</b></p>
+ <p>ล่ามทั้งหมด:
+ <b>${db.users.filter(x=>x.role==="interpreter").length}</b></p>
+ <p>คำร้องทั้งหมด: <b>${db.requests.length}</b></p>
+ <p>คำร้องรอดำเนินการ:
+ <b>${db.requests.filter(x=>x.status==="รอจัดหาล่าม").length}</b></p>
+ </div>
+ <div class="actions">
+ <button onclick="resetDemo()">ล้างข้อมูลสาธิต</button>
+ </div>
+ </div>
+ ${requestTable(db.requests)}`;
+}
+
+function resetDemo(){
+ if(!confirm("ล้างข้อมูลสาธิตทั้งหมดในเบราว์เซอร์นี้?"))return;
+ db={users:[],requests:[],session:null};
+ save();
+ go("home");
+}
+
+render();
+</script>
 </body>
 </html>
