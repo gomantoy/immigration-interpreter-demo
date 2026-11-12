@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Immigration Interpreter Service</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f6fa;
+      margin: 0;
+      color: #19334d;
+    }
+    header {
+      background: #123354;
+      color: white;
+      padding: 22px;
+      text-align: center;
+    }
+    main {
+      max-width: 900px;
+      margin: 25px auto;
+      padding: 15px;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px #0001;
+    }
+    button {
+      background: #1768a7;
+      color: white;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      box-sizing: border-box;
+    }
+    @media (max-width: 600px) {
+      main { margin: 8px; }
+      .card { padding: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>IMMIGRATION INTERPRETER SERVICE</h2>
+    <p>ระบบจัดหาล่ามออนไลน์ สำนักงานตรวจคนเข้าเมือง</p>
+    <small>DEMO VERSION</small>
+  </header>
+
+  <main>
+    <div class="card" id="screen">
+      <h2>ยินดีต้อนรับ</h2>
+      <p>ระบบจัดหาล่ามแปลภาษาออนไลน์</p>
+      <button onclick="register()">สมัครสมาชิก</button>
+      <button onclick="login()">เข้าสู่ระบบ</button>
+    </div>
+  </main>
+
+  <script>
+    const screen = document.getElementById("screen");
+
+    function register() {
+      screen.innerHTML = `
+        <h2>สมัครสมาชิก</h2>
+        <select>
+          <option>เจ้าหน้าที่ตรวจคนเข้าเมือง</option>
+          <option>ล่ามแปลภาษา</option>
+        </select>
+        <input placeholder="ชื่อ-นามสกุลสมมติ">
+        <input placeholder="อีเมลสมมติ">
+        <button onclick="login()">สมัครสมาชิก (สาธิต)</button>
+      `;
+    }
+
+    function login() {
+      screen.innerHTML = `
+        <h2>เข้าสู่ระบบ</h2>
+        <input placeholder="ชื่อผู้ใช้งาน">
+        <input type="password" placeholder="รหัสผ่าน">
+        <button onclick="dashboard()">เข้าสู่ระบบสาธิต</button>
+      `;
+    }
+
+    function dashboard() {
+      screen.innerHTML = `
+        <h2>แดชบอร์ดเจ้าหน้าที่</h2>
+        <button onclick="request()">ยื่นคำร้องขอใช้ล่าม</button>
+        <button onclick="payment()">แบบฟอร์มเบิกจ่าย</button>
+      `;
+    }
+
+    function request() {
+      screen.innerHTML = `
+        <h2>ยื่นคำร้องขอใช้ล่าม</h2>
+        <label>ภาษา</label>
+        <select>
+          <option>ภาษาจีน</option>
+          <option>ภาษาอังกฤษ</option>
+          <option>ภาษาญี่ปุ่น</option>
+          <option>ภาษาเมียนมา</option>
+        </select>
+        <label>วันที่ปฏิบัติงาน</label>
+        <input type="date">
+        <label>เวลา</label>
+        <input type="time">
+        <label>สถานที่</label>
+        <input placeholder="สถานที่ปฏิบัติงาน">
+        <label>ผู้รับผิดชอบค่าใช้จ่าย</label>
+        <select>
+          <option>หน่วยงานชำระเอง</option>
+          <option>เบิกตามระเบียบสำหรับพนักงานสอบสวน</option>
+        </select>
+        <button onclick="alert('ส่งคำร้องสาธิตสำเร็จ')">
+          ส่งคำร้อง
+        </button>
+        <button onclick="dashboard()">กลับ</button>
+      `;
+    }
+
+    function payment() {
+      screen.innerHTML = `
+        <h2>แบบฟอร์มเบิกค่าป่วยการล่าม</h2>
+        <p>สำหรับพนักงานสอบสวน (ตัวอย่าง)</p>
+        <input placeholder="เลขคดี">
+        <input placeholder="ชื่อพนักงานสอบสวน">
+        <input placeholder="ชื่อผู้ปฏิบัติหน้าที่ล่าม">
+        <input placeholder="จำนวนชั่วโมง">
+        <p>อัตราเบิกจ่ายต้องตรวจสอบตามระเบียบ</p>
+        <button onclick="window.print()">พิมพ์แบบฟอร์ม</button>
+        <button onclick="dashboard()">กลับ</button>
+      `;
+    }
+  </script>
+</body>
+</html>
